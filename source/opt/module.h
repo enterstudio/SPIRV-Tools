@@ -28,6 +28,7 @@
 #define LIBSPIRV_OPT_MODULE_H_
 
 #include <functional>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -35,7 +36,6 @@
 #include "instruction.h"
 
 namespace spvtools {
-namespace opt {
 namespace ir {
 
 // A struct for containing the module header information.
@@ -64,8 +64,10 @@ class Module {
   void AddExtInstImport(Instruction&& e) {
     ext_inst_imports_.push_back(std::move(e));
   }
-  // Appends a memory model instruction to this module.
-  void SetMemoryModel(Instruction&& m) { memory_model_ = std::move(m); }
+  // Adds a memory model instruction to this module.
+  void SetMemoryModel(Instruction&& m) {
+    memory_model_.reset(new Instruction(std::move(m)));
+  }
   // Appends an entry point instruction to this module.
   void AddEntryPoint(Instruction&& e) { entry_points_.push_back(std::move(e)); }
   // Appends an execution mode instruction to this module.
@@ -92,6 +94,8 @@ class Module {
   // Returns a vector of pointers to type-declaration instructions in this
   // module.
   std::vector<Instruction*> types();
+  // Returns the constant-defining instructions.
+  std::vector<Instruction*> GetConstants();
   const std::vector<Instruction>& debugs() const { return debugs_; }
   std::vector<Instruction>& debugs() { return debugs_; }
   const std::vector<Instruction>& annotations() const { return annotations_; }
@@ -114,7 +118,8 @@ class Module {
   std::vector<Instruction> capabilities_;
   std::vector<Instruction> extensions_;
   std::vector<Instruction> ext_inst_imports_;
-  Instruction memory_model_;  // A module only has one memory model instruction.
+  std::unique_ptr<Instruction>
+      memory_model_;  // A module only has one memory model instruction.
   std::vector<Instruction> entry_points_;
   std::vector<Instruction> execution_modes_;
   std::vector<Instruction> debugs_;
@@ -125,7 +130,6 @@ class Module {
 };
 
 }  // namespace ir
-}  // namespace opt
 }  // namespace spvtools
 
 #endif  // LIBSPIRV_OPT_MODULE_H_

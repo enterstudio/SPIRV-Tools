@@ -103,11 +103,11 @@ set_source_files_properties(
   PROPERTIES OBJECT_DEPENDS "${EXTINST_CPP_DEPENDS}")
 
 set(SPIRV_TOOLS_BUILD_VERSION_INC
-	${spirv-tools_BINARY_DIR}/build-version.inc)
+  ${spirv-tools_BINARY_DIR}/build-version.inc)
 set(SPIRV_TOOLS_BUILD_VERSION_INC_GENERATOR
-	${spirv-tools_SOURCE_DIR}/utils/update_build_version.py)
+  ${spirv-tools_SOURCE_DIR}/utils/update_build_version.py)
 set(SPIRV_TOOLS_CHANGES_FILE
-	${spirv-tools_SOURCE_DIR}/CHANGES)
+  ${spirv-tools_SOURCE_DIR}/CHANGES)
 add_custom_command(OUTPUT ${SPIRV_TOOLS_BUILD_VERSION_INC}
    COMMAND ${PYTHON_EXECUTABLE}
            ${SPIRV_TOOLS_BUILD_VERSION_INC_GENERATOR}
@@ -133,6 +133,7 @@ set(SPIRV_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/ext_inst.h
   ${CMAKE_CURRENT_SOURCE_DIR}/instruction.h
   ${CMAKE_CURRENT_SOURCE_DIR}/macro.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/name_mapper.h
   ${CMAKE_CURRENT_SOURCE_DIR}/opcode.h
   ${CMAKE_CURRENT_SOURCE_DIR}/operand.h
   ${CMAKE_CURRENT_SOURCE_DIR}/print.h
@@ -151,6 +152,7 @@ set(SPIRV_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/disassemble.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ext_inst.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/instruction.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/name_mapper.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/opcode.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/operand.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/print.cpp
@@ -165,10 +167,10 @@ set(SPIRV_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/validate_id.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/validate_instruction.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/validate_layout.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/validate_ssa.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/val/BasicBlock.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/val/Construct.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/val/Function.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/val/Id.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/val/ValidationState.cpp)
 
 # The software_version.cpp file includes build-version.inc.

@@ -25,6 +25,41 @@
 # MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
 add_spvtools_unittest(TARGET ir_loader
-  SRCS test_ir_loader.cpp opt_test_common.cpp
+  SRCS test_ir_loader.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET pass_manager
+  SRCS test_pass_manager.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET pass_strip_debug_info
+  SRCS test_strip_debug_info.cpp pass_utils.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET pass_freeze_spec_const
+  SRCS test_freeze_spec_const.cpp pass_utils.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET pass_eliminate_dead_const
+  SRCS test_eliminate_dead_const.cpp pass_utils.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET pass_utils
+  SRCS test_utils.cpp pass_utils.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET def_use
+  SRCS test_def_use.cpp pass_utils.cpp
+  LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
+)
+
+add_spvtools_unittest(TARGET assembly_builder
+  SRCS test_assembly_builder.cpp pass_utils.cpp
   LIBS SPIRV-Tools-opt ${SPIRV_TOOLS}
 )

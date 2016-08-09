@@ -246,6 +246,10 @@ typedef enum spv_binary_to_text_options_t {
   SPV_BINARY_TO_TEXT_OPTION_SHOW_BYTE_OFFSET = SPV_BIT(4),
   // Do not output the module header as leading comments in the assembly.
   SPV_BINARY_TO_TEXT_OPTION_NO_HEADER = SPV_BIT(5),
+  // Use friendly names where possible.  The heuristic may expand over
+  // time, but will use common names for scalar types, and debug names from
+  // OpName instructions.
+  SPV_BINARY_TO_TEXT_OPTION_FRIENDLY_NAMES = SPV_BIT(6),
   SPV_FORCE_32_BIT_ENUM(spv_binary_to_text_options_t)
 } spv_binary_to_text_options_t;
 
@@ -348,6 +352,14 @@ typedef enum {
   SPV_ENV_UNIVERSAL_1_0,  // SPIR-V 1.0 latest revision, no other restrictions.
   SPV_ENV_VULKAN_1_0,     // Vulkan 1.0 latest revision.
   SPV_ENV_UNIVERSAL_1_1,  // SPIR-V 1.1 latest revision, no other restrictions.
+  SPV_ENV_OPENCL_2_1, // OpenCL 2.1 latest revision.
+  SPV_ENV_OPENCL_2_2, // OpenCL 2.2 latest revision.
+  SPV_ENV_OPENGL_4_0, // OpenGL 4.0 plus GL_ARB_gl_spirv, latest revisions.
+  SPV_ENV_OPENGL_4_1, // OpenGL 4.1 plus GL_ARB_gl_spirv, latest revisions.
+  SPV_ENV_OPENGL_4_2, // OpenGL 4.2 plus GL_ARB_gl_spirv, latest revisions.
+  SPV_ENV_OPENGL_4_3, // OpenGL 4.3 plus GL_ARB_gl_spirv, latest revisions.
+  // There is no variant for OpenGL 4.4.
+  SPV_ENV_OPENGL_4_5, // OpenGL 4.5 plus GL_ARB_gl_spirv, latest revisions.
 } spv_target_env;
 
 // Returns a string describing the given SPIR-V target environment.

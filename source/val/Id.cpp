@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Google Inc.
+// Copyright (c) 2015-2016 The Khronos Group Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and/or associated documentation files (the
@@ -24,31 +24,39 @@
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
-#ifndef LIBSPIRV_TEST_OPT_OPT_TEST_COMMON_H_
-#define LIBSPIRV_TEST_OPT_OPT_TEST_COMMON_H_
+#include "val/Id.h"
 
-#include <memory>
-#include <string>
-#include <vector>
+namespace libspirv {
+#define OPERATOR(OP)                               \
+  bool operator OP(const Id& lhs, const Id& rhs) { \
+    return lhs.id_ OP rhs.id_;                     \
+  }                                                \
+  bool operator OP(const Id& lhs, uint32_t rhs) { return lhs.id_ OP rhs; }
 
-#include "source/opt/module.h"
+OPERATOR(<)
+OPERATOR(==)
+#undef OPERATOR
 
-namespace spvtools {
-namespace opt {
+Id::Id(const uint32_t result_id)
+    : id_(result_id),
+      type_id_(0),
+      opcode_(SpvOpNop),
+      defining_function_(nullptr),
+      defining_block_(nullptr),
+      uses_(),
+      words_(0) {}
 
-// TODO(antiagainst): expand and export these functions as the C++ interface in
-// libspirv.hpp.
+Id::Id(const spv_parsed_instruction_t* inst, Function* function,
+       BasicBlock* block)
+    : id_(inst->result_id),
+      type_id_(inst->type_id),
+      opcode_(static_cast<SpvOp>(inst->opcode)),
+      defining_function_(function),
+      defining_block_(block),
+      uses_(),
+      words_(inst->words, inst->words + inst->num_words) {}
 
-// Assembles the given assembly |text| and returns the binary.
-std::vector<uint32_t> Assemble(const std::string& text);
-
-// Disassembles the given SPIR-V |binary| and returns the assembly.
-std::string Disassemble(const std::vector<uint32_t>& binary);
-
-// Builds and returns a Module for the given SPIR-V |binary|.
-std::unique_ptr<ir::Module> BuildModule(const std::vector<uint32_t>& binary);
-
-}  // namespace opt
-}  // namespace spvtools
-
-#endif  // LIBSPIRV_TEST_OPT_OPT_TEST_COMMON_H_
+void Id::RegisterUse(const BasicBlock* block) {
+  if (block) { uses_.insert(block); }
+}
+}  // namespace libspirv

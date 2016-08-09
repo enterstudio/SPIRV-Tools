@@ -35,6 +35,7 @@
 
 #include "diagnostic.h"
 #include "opcode.h"
+#include "operand.h"
 #include "spirv_definition.h"
 #include "val/Function.h"
 #include "val/ValidationState.h"
@@ -73,11 +74,27 @@ spv_result_t CapabilityError(ValidationState_t& _, int which_operand,
 spv_capability_mask_t RequiredCapabilities(const AssemblyGrammar& grammar,
                                            spv_operand_type_t type,
                                            uint32_t operand) {
+  spv_capability_mask_t result = 0;
   spv_operand_desc operand_desc;
-  if (SPV_SUCCESS == grammar.lookupOperand(type, operand, &operand_desc))
-    return operand_desc->capabilities;
-  else
-    return 0;
+
+  if (SPV_SUCCESS == grammar.lookupOperand(type, operand, &operand_desc)) {
+    result = operand_desc->capabilities;
+
+    // There's disagreement about whether mere mention of ClipDistance and
+    // CullDistance implies a requirement to declare their associated
+    // capabilities.  Until the dust settles, turn off those checks.
+    // See https://github.com/KhronosGroup/SPIRV-Tools/issues/261
+    // TODO(dneto): Once the final decision is made, fix this in a more
+    // permanent way, e.g. by generating Vulkan-specific operand tables that
+    // eliminate this capability dependency.
+    if (type == SPV_OPERAND_TYPE_BUILT_IN &&
+        grammar.target_env() == SPV_ENV_VULKAN_1_0) {
+      result = result & (~(SPV_CAPABILITY_AS_MASK(SpvCapabilityClipDistance) |
+                           SPV_CAPABILITY_AS_MASK(SpvCapabilityCullDistance)));
+    }
+  }
+
+  return result;
 }
 
 }  // namespace
@@ -109,6 +126,10 @@ spv_result_t CapCheck(ValidationState_t& _,
           }
         }
       }
+    } else if (spvIsIdType(operand.type)) {
+      // TODO(dneto): Check the value referenced by this Id, if we can compute
+      // it.  For now, just punt, to fix issue 248:
+      // https://github.com/KhronosGroup/SPIRV-Tools/issues/248
     } else {
       // Check the operand word as a whole.
       const auto caps = RequiredCapabilities(_.grammar(), operand.type, word);
